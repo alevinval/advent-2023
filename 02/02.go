@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"os"
 	"strconv"
 	"strings"
+
+	"github.com/alevinval/advent-2023/utils"
 )
 
 type game struct {
@@ -14,18 +14,10 @@ type game struct {
 }
 
 func main() {
-	f, err := os.Open("02/02.txt")
-	if err != nil {
-		panic(err)
-	}
-	data, err := io.ReadAll(f)
-	if err != nil {
-		panic(err)
-	}
-
+	lines := utils.GetLines("02")
 	possibleGames := 0
 	power := 0
-	for _, line := range strings.Split(string(data), "\n") {
+	for _, line := range lines {
 		if line == "" {
 			break
 		}

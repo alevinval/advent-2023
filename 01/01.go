@@ -1,9 +1,9 @@
 package main
 
 import (
-	"io"
-	"os"
 	"strings"
+
+	"github.com/alevinval/advent-2023/utils"
 )
 
 var (
@@ -29,16 +29,7 @@ var (
 )
 
 func main() {
-	f, err := os.Open("01/01.txt")
-	if err != nil {
-		panic(err)
-	}
-	data, err := io.ReadAll(f)
-	if err != nil {
-		panic(err)
-	}
-
-	lines := strings.Split(string(data), "\n")
+	lines := utils.GetLines("01")
 	total := 0
 	for idx := range lines {
 		total += recoverCode(lines[idx])
@@ -65,7 +56,6 @@ func recoverCode(line string) int {
 			break
 		}
 	}
-	println(line, code)
 	return code
 }
 

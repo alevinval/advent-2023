@@ -2,23 +2,12 @@ package main
 
 import (
 	"fmt"
-	"io"
-	"os"
+	"github.com/alevinval/advent-2023/utils"
 	"strconv"
-	"strings"
 )
 
 func main() {
-	f, err := os.Open("03/03.txt")
-	if err != nil {
-		panic(err)
-	}
-	data, err := io.ReadAll(f)
-	if err != nil {
-		panic(err)
-	}
-
-	lines := strings.Split(string(data), "\n")
+	lines := utils.GetLines("03")
 	engine := make([][]string, len(lines))
 
 	for row, line := range lines {
