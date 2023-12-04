@@ -9,7 +9,7 @@ import (
 )
 
 func GetLines(day string) []string {
-	f, err := os.Open(fmt.Sprintf("%s/%s.txt", day, day))
+	f, err := os.Open(fmt.Sprintf("../inputs/%s.txt", day))
 	if err != nil {
 		panic(err)
 	}
