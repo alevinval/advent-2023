@@ -44,7 +44,7 @@ func gatherParts(engine [][]string, gatherFn func(string) bool) (int, [][]int) {
 			}
 			if chain != "" {
 				if isPart(engine, x, chainStart, chain, gatherFn) {
-					v := getDigit(chain)
+					v := utils.GetDigit(chain)
 					total += v
 					gatheredParts = append(gatheredParts, []int{x, chainStart, v})
 				}
@@ -133,12 +133,4 @@ func isGear(value string) bool {
 func isDigit(value string) bool {
 	_, err := strconv.Atoi(value)
 	return err == nil
-}
-
-func getDigit(value string) int {
-	v, err := strconv.Atoi(value)
-	if err != nil {
-		panic("cannot parse integer")
-	}
-	return v
 }
