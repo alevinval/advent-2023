@@ -1,14 +1,10 @@
 use std::{
     collections::HashMap,
-    fs::File,
-    io::{self, BufReader, Read},
+    io::{self},
 };
 
 fn main() -> io::Result<()> {
-    let file = File::open("../../inputs/01.txt")?;
-    let mut buf_reader = BufReader::new(file);
-    let mut contents = String::new();
-    buf_reader.read_to_string(&mut contents)?;
+    let input = advent::open("01");
 
     let mut dict = HashMap::new();
     dict.insert("one", "1");
@@ -30,7 +26,7 @@ fn main() -> io::Result<()> {
     overlaps.insert("eightree", "83");
 
     let mut result = 0;
-    for line in contents.lines() {
+    for line in input.lines() {
         let line = normalize(&dict, &overlaps, line.into());
         result += recover_code(&line)
     }

@@ -1,9 +1,4 @@
-use std::{
-    fs::File,
-    io::{BufReader, Read},
-    iter::Peekable,
-    slice::Iter,
-};
+use std::{iter::Peekable, slice::Iter};
 
 static EXAMPLE: &str = "seeds: 79 14 55 13
 
@@ -106,12 +101,9 @@ impl Transform {
 }
 
 fn main() {
-    let file = File::open("../../inputs/05.txt").unwrap();
-    let mut buf_reader = BufReader::new(file);
-    let mut input = String::new();
-    buf_reader.read_to_string(&mut input).unwrap();
-
     run(EXAMPLE);
+
+    let input = advent::open("05");
     run(&input)
 }
 
