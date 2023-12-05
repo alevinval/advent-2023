@@ -39,54 +39,69 @@ humidity-to-location map:
 60 56 37
 56 93 4";
 
-#[derive(Debug)]
-struct Transform {
-    to: u64,
-    from: u64,
-    range: u64,
+struct Table {
+    mappings: Vec<Mapping>,
 }
 
 struct Mapping {
     transforms: Vec<Transform>,
 }
 
-struct Table {
-    mappings: Vec<Mapping>,
+#[derive(Debug)]
+struct Transform {
+    to: u64,
+    from: u64,
+    len: u64,
 }
 
 impl Table {
-    fn apply(&self, start: u64, n: u64) -> u64 {
-        let m = (start..(start + n))
-            .map(|mut seed| {
-                self.mappings.iter().for_each(|m| {
-                    seed = m.apply(seed);
-                });
-                seed
-            })
-            .min()
-            .unwrap();
-        println!("chunk_min: {m}");
+    fn apply(&self, seed: u64, n: u64) -> u64 {
+        let intermediate = self
+            .mappings
+            .iter()
+            .fold(vec![(seed, seed + n)], |acc, mapping| {
+                acc.iter()
+                    .flat_map(|(from, to)| mapping.apply(*from, *to))
+                    .collect()
+            });
+
+        let m = intermediate.iter().map(|f| f.0).min().unwrap();
+        println!("chunk_min: {m:?}");
 
         m
     }
 }
 
 impl Mapping {
-    fn apply(&self, seed: u64) -> u64 {
-        self.transforms
-            .iter()
-            .find(|t| t.contains(seed))
-            .map_or(seed, |t| t.apply(seed))
+    fn apply(&self, from: u64, to: u64) -> Vec<(u64, u64)> {
+        let mut out = vec![];
+        let mut ranges = vec![(from, to)];
+        while let Some((from, to)) = ranges.pop() {
+            if self.transforms.iter().all(|t| {
+                let s = from.max(t.from);
+                let e = to.min(t.from + t.len);
+                if s < e {
+                    out.push((t.apply(s), t.apply(e)));
+                    if from < s {
+                        ranges.push((from, s));
+                    }
+                    if e < to {
+                        ranges.push((e, to));
+                    }
+                    return false;
+                }
+                true
+            }) {
+                out.push((from, to));
+            }
+        }
+        out
     }
 }
 
 impl Transform {
-    fn contains(&self, n: u64) -> bool {
-        n >= self.from && n < (self.from + self.range)
-    }
-
-    fn apply(&self, n: u64) -> u64 {
-        self.to + (n - self.from)
+    fn apply(&self, seed: u64) -> u64 {
+        self.to + (seed - self.from)
     }
 }
 
@@ -96,7 +111,7 @@ fn main() {
     let mut input = String::new();
     buf_reader.read_to_string(&mut input).unwrap();
 
-    // run(EXAMPLE)
+    run(EXAMPLE);
     run(&input)
 }
 
@@ -137,7 +152,7 @@ fn gather(iter: &mut Peekable<Iter<'_, &str>>) -> Mapping {
         let transform = Transform {
             to: arr[0],
             from: arr[1],
-            range: arr[2],
+            len: arr[2],
         };
         transforms.push(transform);
     }
