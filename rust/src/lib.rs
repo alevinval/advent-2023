@@ -12,3 +12,22 @@ pub fn open(day: &str) -> String {
         .expect("cannot read input");
     contents
 }
+
+pub fn lcm(a: usize, b: usize) -> usize {
+    a * b / gcd(a, b)
+}
+
+pub fn gcd(mut min: usize, mut max: usize) -> usize {
+    if min > max {
+        (max, min) = (min, max);
+    }
+    loop {
+        let r = max % min;
+        if r == 0 {
+            return min;
+        }
+
+        max = min;
+        min = r;
+    }
+}
